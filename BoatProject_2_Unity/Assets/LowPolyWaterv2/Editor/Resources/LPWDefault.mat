@@ -2,15 +2,25 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: LPWDefault
   m_Shader: {fileID: 4800000, guid: 8165be4dd0b12774d80426d906df9c38, type: 3}
-  m_ShaderKeywords: LPW_HQFOAM WATER_REFLECTIVE WATER_REFRACTIVE _DISTORT_ON _EDGEBLEND_ON
-    _HQFOAM_ON _LIGHTABS_ON _SHADING_VERTEXLIT _WAVES_HIGHQUALITY
+  m_ValidKeywords:
+  - LPW_HQFOAM
+  - WATER_REFLECTIVE
+  - WATER_REFRACTIVE
+  - _DISTORT_ON
+  - _LIGHTABS_ON
+  - _SHADING_VERTEXLIT
+  - _WAVES_HIGHQUALITY
+  m_InvalidKeywords:
+  - _EDGEBLEND_ON
+  - _HQFOAM_ON
+  - _ZWRITE_ON
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -40,6 +50,7 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - _Absorption: 1.27
     - _BumpScale: 35
@@ -96,3 +107,4 @@ Material:
     - _SpecColor: {r: 1, g: 0.9403327, b: 0.7122642, a: 1}
     - _Sun: {r: -0.42797267, g: 0.3232225, b: -0.8440181, a: 0}
     - _SunColor: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []
