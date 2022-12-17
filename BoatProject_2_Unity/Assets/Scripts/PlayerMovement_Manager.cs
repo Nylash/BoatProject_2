@@ -14,29 +14,25 @@ public class PlayerMovement_Manager : MonoBehaviour
 
     #region VARIABLES
     private float m_orientationAngle;
-    private Sails m_currentSails;
+    public Sails m_currentSails;
     private float m_accelerationTimer;
-    private float m_decelerationTimer;
-    private SpeedStatus m_currentSpeedStatus;
+    private float m_deccelerationTimer;
 
-    enum Sails
+    public enum Sails
     {
         none, low, middle, high
     }
 
-    enum SpeedStatus
-    {
-        stopped, accelerating, deccelerating, maxSpeed
-    }
     #endregion
 
     #region CONFIGURATION
-    [Range(12, 20)][SerializeField] float m_forwardSpeed = 15;
-    [SerializeField] float m_maxSpeed = 7.5f;
+    [SerializeField] AnimationCurve m_accelerationSpeed_low;
+    [SerializeField] AnimationCurve m_accelerationSpeed_middle;
+    [SerializeField] AnimationCurve m_accelerationSpeed_high;
     [SerializeField] float m_orientationSpeed = 1;
     [SerializeField] float m_minimalVelocityForOrientation = 1;
-    [SerializeField] float m_accelerationSpeed;
-    [SerializeField] float m_deccelerationSpeed;
+    [SerializeField] float m_accelerationSpeedTime;
+    [SerializeField] float m_deccelerationSpeedTime;
     #endregion
 
     public PlayerMovement_Manager Instance()
@@ -71,40 +67,89 @@ public class PlayerMovement_Manager : MonoBehaviour
     {
         ForwardMovement();
         HandlingOrientation();
-        print(m_currentSails);
     }
 
     private void ForwardMovement()
     {
         if(m_currentSails > Sails.none)
         {
-            m_rigibody.AddForce(m_forwardSpeed * transform.forward);
-
-            m_rigibody.velocity = Vector3.ClampMagnitude(m_rigibody.velocity, m_maxSpeed * (int)m_currentSails);
-            if (m_rigibody.velocity.magnitude == m_maxSpeed)
+            switch (m_currentSails)
             {
-                m_currentSpeedStatus = SpeedStatus.maxSpeed;
-                m_accelerationTimer = 0;
-                m_decelerationTimer = 0;
-            }
-            else
-            {
-                m_currentSpeedStatus = SpeedStatus.accelerating;
+                case Sails.low:
+                    if(m_rigibody.velocity.magnitude > m_accelerationSpeed_low.Evaluate(1))
+                    {
+                        m_accelerationTimer -= m_deccelerationSpeedTime;
 
-                m_accelerationTimer += m_accelerationSpeed;
+                        m_rigibody.velocity = m_accelerationSpeed_middle.Evaluate(m_accelerationTimer) * transform.forward;
+
+                    }
+                    else if (m_rigibody.velocity.magnitude == m_accelerationSpeed_low.Evaluate(1))
+                    {
+                        m_accelerationTimer = 0;
+
+                        m_rigibody.velocity = m_accelerationSpeed_low.Evaluate(1) * transform.forward;
+                    }
+                    else
+                    {
+                        m_accelerationTimer += m_accelerationSpeedTime;
+
+                        m_rigibody.velocity = m_accelerationSpeed_low.Evaluate(m_accelerationTimer) * transform.forward;
+                    }
+                    break;
+                case Sails.middle:
+                    if (m_rigibody.velocity.magnitude > m_accelerationSpeed_middle.Evaluate(1))
+                    {
+                        m_accelerationTimer -= m_deccelerationSpeedTime;
+
+                        m_rigibody.velocity = m_accelerationSpeed_high.Evaluate(m_accelerationTimer) * transform.forward;
+
+                    }
+                    else if (m_rigibody.velocity.magnitude == m_accelerationSpeed_middle.Evaluate(1))
+                    {
+                        m_accelerationTimer = 0;
+
+                        m_rigibody.velocity = m_accelerationSpeed_middle.Evaluate(1) * transform.forward;
+                    }
+                    else
+                    {
+                        m_accelerationTimer += m_accelerationSpeedTime;
+
+                        m_rigibody.velocity = m_accelerationSpeed_middle.Evaluate(m_accelerationTimer) * transform.forward;
+                    }
+                    break;
+                case Sails.high:
+                    if (m_rigibody.velocity.magnitude >= m_accelerationSpeed_high.Evaluate(1))
+                    {
+                        m_accelerationTimer = 0;
+
+                        m_rigibody.velocity = m_accelerationSpeed_high.Evaluate(1) * transform.forward;
+                    }
+                    else
+                    {
+                        m_accelerationTimer += m_accelerationSpeedTime;
+
+                        m_rigibody.velocity = m_accelerationSpeed_high.Evaluate(m_accelerationTimer) * transform.forward;
+                    }
+                    break;
             }
         }
+        /*
+                m_accelerationTimer += m_accelerationSpeedTime;
+
+                m_rigibody.velocity = m_currentSpeedCurve.Evaluate(m_accelerationTimer) * transform.forward;
+         * 
+         */
         else
         {
-            if (m_rigibody.velocity.magnitude != 0)
+            if (m_rigibody.velocity.magnitude <= 0.05)
             {
-                m_currentSpeedStatus = SpeedStatus.deccelerating;
+                m_rigibody.velocity = Vector3.zero;
             }
             else
             {
-                m_currentSpeedStatus = SpeedStatus.stopped;
-                m_accelerationTimer = 0;
-                m_decelerationTimer = 0;
+                m_deccelerationTimer += m_deccelerationSpeedTime;
+
+                m_rigibody.velocity = Vector3.Lerp(m_rigibody.velocity, Vector3.zero, m_deccelerationTimer);
             }
         }
     }
@@ -128,6 +173,15 @@ public class PlayerMovement_Manager : MonoBehaviour
             return;
         }
         m_currentSails += signe;
+        if(signe < 0)
+        {
+            m_accelerationTimer = 0;
+        }
+        else
+        {
+            m_accelerationTimer = 1;
+        }
+        m_deccelerationTimer = 0;
     }
 
     private void Respawn()
