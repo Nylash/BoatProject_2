@@ -13,8 +13,21 @@ public class PlayerMovement_Manager : MonoBehaviour
     #endregion
 
     #region VARIABLES
-    private bool m_movingForward;
     private float m_orientationAngle;
+    private Sails m_currentSails;
+    private float m_accelerationTimer;
+    private float m_decelerationTimer;
+    private SpeedStatus m_currentSpeedStatus;
+
+    enum Sails
+    {
+        none, low, middle, high
+    }
+
+    enum SpeedStatus
+    {
+        stopped, accelerating, deccelerating, maxSpeed
+    }
     #endregion
 
     #region CONFIGURATION
@@ -22,6 +35,8 @@ public class PlayerMovement_Manager : MonoBehaviour
     [SerializeField] float m_maxSpeed = 7.5f;
     [SerializeField] float m_orientationSpeed = 1;
     [SerializeField] float m_minimalVelocityForOrientation = 1;
+    [SerializeField] float m_accelerationSpeed;
+    [SerializeField] float m_deccelerationSpeed;
     #endregion
 
     public PlayerMovement_Manager Instance()
@@ -43,11 +58,11 @@ public class PlayerMovement_Manager : MonoBehaviour
     {
         m_controls = new Controls();
 
-        m_controls.Gameplay.Forward.started += ctx => m_movingForward = true;
-        m_controls.Gameplay.Forward.canceled += ctx => m_movingForward = false;
         m_controls.Gameplay.Debug_Respawn.performed += ctx => Respawn();
         m_controls.Gameplay.Orientation.performed += ctx => m_orientationAngle = ctx.ReadValue<float>();
         m_controls.Gameplay.Orientation.canceled += ctx => m_orientationAngle = 0;
+        m_controls.Gameplay.SpeedUp.performed += ctx => ChangeSpeed(1);
+        m_controls.Gameplay.SpeedDown.performed += ctx => ChangeSpeed(-1);
 
         m_rigibody = GetComponent<Rigidbody>();
     }
@@ -56,14 +71,41 @@ public class PlayerMovement_Manager : MonoBehaviour
     {
         ForwardMovement();
         HandlingOrientation();
+        print(m_currentSails);
     }
 
     private void ForwardMovement()
     {
-        if(m_movingForward)
+        if(m_currentSails > Sails.none)
         {
             m_rigibody.AddForce(m_forwardSpeed * transform.forward);
-            m_rigibody.velocity = Vector3.ClampMagnitude(m_rigibody.velocity, m_maxSpeed);
+
+            m_rigibody.velocity = Vector3.ClampMagnitude(m_rigibody.velocity, m_maxSpeed * (int)m_currentSails);
+            if (m_rigibody.velocity.magnitude == m_maxSpeed)
+            {
+                m_currentSpeedStatus = SpeedStatus.maxSpeed;
+                m_accelerationTimer = 0;
+                m_decelerationTimer = 0;
+            }
+            else
+            {
+                m_currentSpeedStatus = SpeedStatus.accelerating;
+
+                m_accelerationTimer += m_accelerationSpeed;
+            }
+        }
+        else
+        {
+            if (m_rigibody.velocity.magnitude != 0)
+            {
+                m_currentSpeedStatus = SpeedStatus.deccelerating;
+            }
+            else
+            {
+                m_currentSpeedStatus = SpeedStatus.stopped;
+                m_accelerationTimer = 0;
+                m_decelerationTimer = 0;
+            }
         }
     }
 
@@ -73,6 +115,19 @@ public class PlayerMovement_Manager : MonoBehaviour
         {
             transform.Rotate(Vector3.up, m_orientationAngle * m_orientationSpeed);
         }
+    }
+
+    private void ChangeSpeed(int signe)
+    {
+        if(m_currentSails == Sails.none && signe < 0)
+        {
+            return;
+        }
+        if (m_currentSails == Sails.high && signe > 0)
+        {
+            return;
+        }
+        m_currentSails += signe;
     }
 
     private void Respawn()

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1552905867468310366}
   - component: {fileID: 4403258030437495810}
+  - component: {fileID: 8452118326913018810}
   m_Layer: 0
   m_Name: Physic
   m_TagString: Untagged
@@ -43,8 +44,21 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1.6112479, y: 4.1262302, z: 3.3850596}
+  m_Center: {x: -0.000000059604645, y: 1.5631151, z: 1.2332798}
+--- !u!65 &8452118326913018810
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3533665261280825881}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 2.401746, z: 1.3114991}
+  m_Center: {x: 0, y: 0.83437264, z: 3.5822403}
 --- !u!1 &3546574581773353360
 GameObject:
   m_ObjectHideFlags: 0
@@ -110,7 +124,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_forwardSpeed: 15
-  m_maxSpeed: 7.5
+  m_maxSpeed: 2.5
   m_orientationSpeed: 0.75
   m_minimalVelocityForOrientation: 1
 --- !u!114 &7457939254914098354

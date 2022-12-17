@@ -6,15 +6,6 @@
             "id": "4fdf3504-16b9-4ec1-a86f-021f2b029ca0",
             "actions": [
                 {
-                    "name": "Forward",
-                    "type": "Button",
-                    "id": "ed332862-d700-412f-a4c2-7e8c80f570b2",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
                     "name": "Debug_Respawn",
                     "type": "Button",
                     "id": "7f94ae01-2a95-48f1-8dcb-97f3d1adf940",
@@ -31,6 +22,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "SpeedUp",
+                    "type": "Button",
+                    "id": "b1f5b203-1c80-4318-80e8-60bd8e33d21a",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "SpeedDown",
+                    "type": "Button",
+                    "id": "16f80dc0-1ce2-486d-b109-d8c7d5f55e74",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -42,28 +51,6 @@
                     "processors": "",
                     "groups": "Keyboard",
                     "action": "Debug_Respawn",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "bf40f06f-54b3-4e8f-8a05-f9864cb3c152",
-                    "path": "<Keyboard>/w",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard",
-                    "action": "Forward",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "d0e7e4cd-3ece-4f37-ab13-5ca1d58b9f57",
-                    "path": "<Gamepad>/leftStick/up",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Gamepad",
-                    "action": "Forward",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -110,6 +97,50 @@
                     "action": "Orientation",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "13c863da-efc0-47e6-b500-79aa84ac23c1",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "SpeedUp",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "18bc8959-bb96-4110-b0e3-a25daeb4c345",
+                    "path": "<Gamepad>/dpad/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SpeedUp",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b2eac762-3bf5-4787-bdf0-c2223bec92d3",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "SpeedDown",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "91d539b0-9947-4675-8486-e6a9903b664d",
+                    "path": "<Gamepad>/dpad/down",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SpeedDown",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }
