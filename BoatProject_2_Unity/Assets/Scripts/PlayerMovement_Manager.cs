@@ -14,9 +14,10 @@ public class PlayerMovement_Manager : MonoBehaviour
 
     #region VARIABLES
     private float m_orientationAngle;
-    public Sails m_currentSails;
+    private Sails m_currentSails;
     private float m_accelerationTimer;
     private float m_deccelerationTimer;
+    private float m_targetSpeed;
 
     public enum Sails
     {
@@ -26,9 +27,9 @@ public class PlayerMovement_Manager : MonoBehaviour
     #endregion
 
     #region CONFIGURATION
-    [SerializeField] AnimationCurve m_accelerationSpeed_low;
-    [SerializeField] AnimationCurve m_accelerationSpeed_middle;
-    [SerializeField] AnimationCurve m_accelerationSpeed_high;
+    [SerializeField] float m_targetSpeedLowSails;
+    [SerializeField] float m_targetSpeedMiddleSails;
+    [SerializeField] float m_targetSpeedHighSails;
     [SerializeField] float m_orientationSpeed = 1;
     [SerializeField] float m_minimalVelocityForOrientation = 1;
     [SerializeField] float m_accelerationSpeedTime;
@@ -73,84 +74,24 @@ public class PlayerMovement_Manager : MonoBehaviour
     {
         if(m_currentSails > Sails.none)
         {
-            switch (m_currentSails)
+            m_accelerationTimer += m_accelerationSpeedTime;
+            m_rigibody.velocity = Mathf.Lerp(m_rigibody.velocity.magnitude, m_targetSpeed, m_accelerationTimer) * transform.forward;
+            /*
+            if (m_rigibody.velocity.magnitude > m_targetSpeed)
             {
-                case Sails.low:
-                    if(m_rigibody.velocity.magnitude > m_accelerationSpeed_low.Evaluate(1))
-                    {
-                        m_accelerationTimer -= m_deccelerationSpeedTime;
-
-                        m_rigibody.velocity = m_accelerationSpeed_middle.Evaluate(m_accelerationTimer) * transform.forward;
-
-                    }
-                    else if (m_rigibody.velocity.magnitude == m_accelerationSpeed_low.Evaluate(1))
-                    {
-                        m_accelerationTimer = 0;
-
-                        m_rigibody.velocity = m_accelerationSpeed_low.Evaluate(1) * transform.forward;
-                    }
-                    else
-                    {
-                        m_accelerationTimer += m_accelerationSpeedTime;
-
-                        m_rigibody.velocity = m_accelerationSpeed_low.Evaluate(m_accelerationTimer) * transform.forward;
-                    }
-                    break;
-                case Sails.middle:
-                    if (m_rigibody.velocity.magnitude > m_accelerationSpeed_middle.Evaluate(1))
-                    {
-                        m_accelerationTimer -= m_deccelerationSpeedTime;
-
-                        m_rigibody.velocity = m_accelerationSpeed_high.Evaluate(m_accelerationTimer) * transform.forward;
-
-                    }
-                    else if (m_rigibody.velocity.magnitude == m_accelerationSpeed_middle.Evaluate(1))
-                    {
-                        m_accelerationTimer = 0;
-
-                        m_rigibody.velocity = m_accelerationSpeed_middle.Evaluate(1) * transform.forward;
-                    }
-                    else
-                    {
-                        m_accelerationTimer += m_accelerationSpeedTime;
-
-                        m_rigibody.velocity = m_accelerationSpeed_middle.Evaluate(m_accelerationTimer) * transform.forward;
-                    }
-                    break;
-                case Sails.high:
-                    if (m_rigibody.velocity.magnitude >= m_accelerationSpeed_high.Evaluate(1))
-                    {
-                        m_accelerationTimer = 0;
-
-                        m_rigibody.velocity = m_accelerationSpeed_high.Evaluate(1) * transform.forward;
-                    }
-                    else
-                    {
-                        m_accelerationTimer += m_accelerationSpeedTime;
-
-                        m_rigibody.velocity = m_accelerationSpeed_high.Evaluate(m_accelerationTimer) * transform.forward;
-                    }
-                    break;
-            }
-        }
-        /*
-                m_accelerationTimer += m_accelerationSpeedTime;
-
-                m_rigibody.velocity = m_currentSpeedCurve.Evaluate(m_accelerationTimer) * transform.forward;
-         * 
-         */
-        else
-        {
-            if (m_rigibody.velocity.magnitude <= 0.05)
-            {
-                m_rigibody.velocity = Vector3.zero;
+                m_rigibody.velocity = Mathf.Lerp(m_targetSpeed, m_rigibody.velocity.magnitude, m_accelerationTimer) * transform.forward;
             }
             else
             {
-                m_deccelerationTimer += m_deccelerationSpeedTime;
-
-                m_rigibody.velocity = Vector3.Lerp(m_rigibody.velocity, Vector3.zero, m_deccelerationTimer);
+                m_rigibody.velocity = Mathf.Lerp(m_rigibody.velocity.magnitude, m_targetSpeed, m_accelerationTimer) * transform.forward;
             }
+            */
+        }
+        else
+        {
+            m_deccelerationTimer += m_deccelerationSpeedTime;
+
+            m_rigibody.velocity = Mathf.Lerp(m_rigibody.velocity.magnitude, 0, m_deccelerationSpeedTime) * transform.forward;
         }
     }
 
@@ -173,14 +114,21 @@ public class PlayerMovement_Manager : MonoBehaviour
             return;
         }
         m_currentSails += signe;
-        if(signe < 0)
+
+        switch (m_currentSails)
         {
-            m_accelerationTimer = 0;
+            case Sails.low:
+                m_targetSpeed = m_targetSpeedLowSails;
+                break;
+            case Sails.middle:
+                m_targetSpeed = m_targetSpeedMiddleSails;
+                break;
+            case Sails.high:
+                m_targetSpeed = m_targetSpeedHighSails;
+                break;
         }
-        else
-        {
-            m_accelerationTimer = 1;
-        }
+
+        m_accelerationTimer = 0;
         m_deccelerationTimer = 0;
     }
 
